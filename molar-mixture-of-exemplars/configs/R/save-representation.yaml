@@ -1,0 +1,31 @@
+# @package _global_
+defaults:
+  - /model/callbacks: default.yaml
+  - /model/custom_callbacks: 
+    - save_predictions_eval.yaml
+  - /model/dataloaders: sequential.yaml
+  - /model/logger: tensorboard.yaml
+  - /model/loss: paws_loss.yaml
+  - /model/optimizer: PAWS_LARS.yaml
+  - /model/scheduler: paws_cosine_annealing_with_warmup.yaml
+  - /model/trainer: default.yaml
+  - /model/methods: paws.yaml 
+  - /R/experiment: ${R}_${model/networks}_${model/dataset}
+  - _self_
+
+task_name: "save-representation"
+
+train: False
+test: False
+predict: True
+
+model:
+
+  custom_callbacks:
+    save_representation:
+      _target_: goo.callbacks.save_representation.SaveRepresentation
+      layers: ['backbone']
+      compress_arrays: False
+      only_class_token: True
+      target_dataset: 'data_train'
+    # save_predictions: null

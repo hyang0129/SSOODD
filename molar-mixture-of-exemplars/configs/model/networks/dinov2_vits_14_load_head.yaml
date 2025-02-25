@@ -1,0 +1,21 @@
+networks:
+  backbone:
+    _target_: goo.networks.dinov2_linear_classifier.ModelWithIntermediateLayers
+    _partial_: true
+    feature_model:
+      _target_: torch.hub.load
+      repo_or_dir: 'facebookresearch/dinov2'
+      model: 'dinov2_vits14'
+    n_last_blocks: 1
+    outputs: 'cls_tkn'
+    no_inference: True
+  head:
+    _target_: goo.networks.load_module.LoadModule
+    _partial_: true
+    model_class: 
+      _target_: goo.methods.self_supervised.sne.SNE
+      _partial_: true
+    model_path: ../output/local/paws-vMF-SNE_0/checkpoints/last.ckpt
+    seed: -1
+    module_name: 'head_semi'
+    module_target: 'head_semi'

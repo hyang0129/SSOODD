@@ -1,0 +1,9 @@
+loss:
+  _target_: goo.loss.molar.init_molar_loss
+  _partial_: true
+  multicrop: 6 # param multicrop: number of small multi-crop views
+  tau: 0.1 # param tau: cosine similarity temperature
+  T: 0.25  # param T: target sharpenning temperature
+  me_max: false # param me_max: whether to perform me-max regularization
+
+

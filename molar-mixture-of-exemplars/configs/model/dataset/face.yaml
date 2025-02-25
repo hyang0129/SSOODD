@@ -1,0 +1,2 @@
+_target_: goo.datasets.FACES_lightning.FaceDataModule
+data_dir: datasets

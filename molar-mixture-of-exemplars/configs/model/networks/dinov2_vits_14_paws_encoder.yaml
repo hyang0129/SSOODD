@@ -1,0 +1,20 @@
+networks:
+  backbone:
+    _target_: goo.networks.dinov2_linear_classifier.ModelWithIntermediateLayers
+    _partial_: true
+    feature_model:
+      _target_: torch.hub.load
+      repo_or_dir: 'facebookresearch/dinov2'
+      model: 'dinov2_vits14'
+    n_last_blocks: 1
+    outputs: 'cls_tkn'
+    no_inference: True
+  head:
+    _target_: goo.networks.paws_encoders.ProjectionHead
+    _partial_: true
+    hidden_dim: 384
+    output_dim: 512
+    last_layer_bias: True
+
+
+

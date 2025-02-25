@@ -1,0 +1,5 @@
+# placeholder
+_target_: goo.methods.semi_supervised.molar.MoLAR
+label_smoothing: 0.1 
+supervised_views: 2
+supervised: True

@@ -1,0 +1,78 @@
+# @package _global_
+# python3 main.py +R=simclr +model/dataset=cifar10 +model/networks=simclrv2_resnet18sk0_cifar10stem +debug=mine
+defaults:
+  - /model/augmentations@model.augmentations.aug_labelled: 224px_paws_labelled_normed.yaml
+  - /model/augmentations@model.augmentations.aug_unlabelled: 224px_paws_unlabelled_normed.yaml
+  - /model/augmentations@model.augmentations.aug_validation: center_crop_224px.yaml
+  - /model/augmentations@model.augmentations.aug_predict: center_crop_224px.yaml
+  - _self_
+
+# rsync -avzh   \
+#   njb502@gadi.nci.org.au:/g/data/he09/njb502/190801/lightly-wrapper/output/local/2023-12-20_09-13_74f54_paws_tsne_dinov2_tv_semisupervised_0-5_d_o.s_s.d_o.T.__t.d.C10.t.m_es20_1_0 pretrained/
+
+model:
+
+  trainer:
+    precision: '16-mixed'
+    check_val_every_n_epoch: 1
+    max_epochs: 50
+    sync_batchnorm: True
+    use_distributed_sampler: False
+
+  dataloaders:
+    num_workers: 6
+    batch_size: 320
+    batch_size_unlabelled_scalar: 1.6
+    pin_memory: False
+    labelled_indices_csv: "labelled_prototypes/CIFAR10_X.csv"
+    train_labelled_batch_sampler:
+      _partial_: true
+      _target_: goo.samplers.paws_class_stratified.ClassStratifiedSampler
+      classes_per_batch: 10
+      unique_classes: True
+    train_unlabelled_sampler:
+      _partial_: true
+      _target_: goo.samplers.distributed_wrapper.MyDistributedSampler
+    val_sampler:
+      _partial_: true
+      _target_: goo.samplers.distributed_wrapper.MyDistributedSampler
+      
+  scheduler:
+    scheduler:
+      warmup_steps: 10
+      start_lr: 0.3
+      ref_lr: 6.4
+      final_lr: 0.064
+      T_max: 1
+
+  optimizer:
+    optimizer:
+      optimizer:
+        lr: 6.4
+        weight_decay: 1.0e-06
+    parameter_groups:
+      param_opt_exclude: ['backbone']
+
+  augmentations:
+    aug_unlabelled:
+      local_crop_size: 98
+
+  loss:
+    loss:
+      _target_: goo.loss.molar.init_molar_loss
+      multicrop: 6
+      tau: 0.1
+      T: 0.25
+      me_max: False
+      ropaws: False
+      prior_tau: 0.1
+      prior_pow: 1.0
+      label_ratio: 5.0
+      s_batch_size: 1
+      u_batch_size: 1
+      sharpen_func: 'mixmatch'
+
+  # callbacks:
+    # model_checkpoint: null
+
+

@@ -1,0 +1,43 @@
+# @package _global_
+# python3 main.py +R=simclr +model/dataset=cifar10 +model/networks=simclrv2_resnet18sk0_cifar10stem +debug=mine
+defaults:
+  - /model/augmentations@model.augmentations.aug_labelled: 224px_paws_unlabelled_normed.yaml
+  - /model/augmentations@model.augmentations.aug_validation: center_crop_224px.yaml
+  - /model/augmentations@model.augmentations.aug_predict: center_crop_224px.yaml
+  - _self_
+
+model:
+  trainer:
+    max_epochs: 20
+    benchmark: True
+    sync_batchnorm: True
+    precision: '16-mixed'
+
+  dataloaders:
+    num_workers: 6
+    batch_size: 512
+    pin_memory: False
+    val_sampler:
+      _partial_: true
+      _target_: goo.samplers.distributed_wrapper.MyDistributedSampler
+
+  augmentations:
+    aug_labelled:
+      local_crop_size: 98
+
+  scheduler:
+    scheduler:
+      warmup_steps: 10
+      start_lr: 0.3
+      ref_lr: 6.4
+      final_lr: 0.064
+      T_max: 1
+
+  optimizer:
+    optimizer:
+      optimizer:
+        lr: 6.4
+        weight_decay: 1.0e-06
+    parameter_groups:
+      param_opt_exclude: ['backbone']
+

@@ -1,0 +1,27 @@
+# @package _global_
+defaults:
+  - /model/callbacks: default.yaml
+  - /model/custom_callbacks: 
+    - save_predictions_eval.yaml
+  - /model/dataloaders: sequential.yaml
+  - /model/logger: tensorboard.yaml
+  - /model/loss: molar_loss.yaml
+  - /model/optimizer: PAWS_LARS.yaml
+  - /model/scheduler: paws_cosine_annealing_with_warmup.yaml
+  - /model/trainer: default.yaml
+  - /model/methods: molar.yaml 
+  - /R/experiment: ${R}_${model/networks}_${model/dataset}
+  - _self_
+
+task_name: "molar"
+
+model:
+  trainer:
+    check_val_every_n_epoch: 1
+
+
+  callbacks:
+    model_checkpoint:
+      dirpath: ${paths.output_dir}/checkpoints
+      monitor: "val/accuracy"
+      mode: "max"
