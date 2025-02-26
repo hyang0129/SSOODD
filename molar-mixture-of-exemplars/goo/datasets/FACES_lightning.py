@@ -1,6 +1,6 @@
 
-# from lightning import LightningDataModule
-# from .base_lightning_module import BaseDataModule
+from lightning import LightningDataModule
+from .base_lightning_module import BaseDataModule
 from pathlib import Path
 
 from torch.utils.data import Dataset
