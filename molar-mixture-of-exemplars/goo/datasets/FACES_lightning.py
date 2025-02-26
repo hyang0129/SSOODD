@@ -49,7 +49,7 @@ class FaceDataset(Dataset):
 
 class OODDataset(Dataset):
     def __init__(
-        self, dataset_name, split="Out", transform=None, random_state=42, rotnet=False
+        self, dataset_name='icmlface', split="Out", transform=None, random_state=42, rotnet=False
     ):
         """
         Returns a datasets split based on 75% 25%.
