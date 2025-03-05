@@ -104,7 +104,8 @@ class OODDataset(Dataset):
         self.transform = transform
         self.new_label_int = None if split == "Out" else new_label_int
 
-        self.targets = [self.new_label_int[i] for i in  list(self.df.label.values)]
+        if self.new_label_int is not None:
+            self.targets = [self.new_label_int[i] for i in  list(self.df.label.values)]
 
     def __len__(self):
         return len(self.df)
